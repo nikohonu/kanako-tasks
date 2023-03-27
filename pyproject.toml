@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kanako-tasks"
-version = "v1"
+version = "v2"
 description = "pomodoro timer"
 authors = ["Niko Honu <nikohonu@gmail.com>"]
 license = "MIT"
