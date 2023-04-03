@@ -1,5 +1,5 @@
 import rich.console
-from rich.table import Table
+from rich.tree import Tree
 
 console = rich.console.Console()
 

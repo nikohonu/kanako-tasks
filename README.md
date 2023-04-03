@@ -1,2 +1,3 @@
 # kanako-tasks
-This is a pomodoro timer for Timewarrior.
+
+kanako-task is a program that provides tools for fast time tracking with timewarrior.
