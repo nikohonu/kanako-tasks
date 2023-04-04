@@ -1,4 +1,5 @@
 import time
+from random import shuffle
 
 from kanako_tasks import (
     actions,
@@ -12,9 +13,13 @@ from kanako_tasks import (
 from kanako_tasks.formatting import Tree, print
 
 
-def start():
+def start(random=False):
     tasks_with_path = parcing.get_tasks_with_path()
-    full_path_task = dmenu.run(tasks_with_path, "Tasks")
+    if not random:
+        full_path_task = dmenu.run(tasks_with_path, "Tasks")
+    else:
+        shuffle(tasks_with_path)
+        full_path_task = tasks_with_path[0]
     if full_path_task:
         index = full_path_task.rfind(".")
         task = full_path_task[index + 1 :]

@@ -19,8 +19,11 @@ def cli():
 
 
 @click.command()
-def start():
-    actions.start()
+@click.option(
+    "--random", "-r", help="start random task", default=False, is_flag=True
+)
+def start(random):
+    actions.start(random)
 
 
 @click.command()
@@ -45,11 +48,13 @@ def stats():
 
 @click.command()
 def run():
-    options = ["start", "stop", "continue"]
+    options = ["start", "random", "stop", "continue"]
     option = dmenu.run(options, "What you want?")
     match option:
         case "start":
             actions.start()
+        case "random":
+            actions.start(True)
         case "stop":
             actions.stop()
         case "continue":
