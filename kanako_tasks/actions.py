@@ -1,15 +1,6 @@
-import time
 from random import shuffle
 
-from kanako_tasks import (
-    actions,
-    dmenu,
-    formatting,
-    notification,
-    parcing,
-    settings,
-    timew,
-)
+from kanako_tasks import dmenu, formatting, parcing, timew
 from kanako_tasks.formatting import Tree, duration_to_str, print
 
 
@@ -73,9 +64,10 @@ def add_branch(key, intervals, root):
         root.add(f"{key} {duration_to_str(value.seconds)}")
 
 
-def stats():
-    tree = Tree("Stats")
-    intervals = timew.get_intervals()
+def stats(period):
+    intervals = timew.get_intervals(f":{period}")
+    total_time = sum([interval["duration"].seconds for interval in intervals])
+    tree = Tree(f"Total duration {duration_to_str(total_time)}")
     branch = tree.add("By name")
     add_branch("name", intervals, branch)
     branch = tree.add("By project")

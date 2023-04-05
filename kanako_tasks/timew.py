@@ -2,8 +2,6 @@ import datetime as dt
 import json
 import subprocess
 
-from click import command
-
 
 def process_interval(raw_interval):
     interval = {}
@@ -69,7 +67,3 @@ def continue_task():
 
 def untag(id, tag):
     subprocess.run(["timew", "untag", f"@{id}", tag])
-
-
-def send_message():
-    subprocess.run(["notify-send", "Notice me, senpai!", "-a", "Kanako"])

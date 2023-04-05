@@ -1,16 +1,8 @@
-import datetime as dt
 from pathlib import Path
 
 import click
 
-from kanako_tasks import (
-    actions,
-    dmenu,
-    formatting,
-    notification,
-    settings,
-    timew,
-)
+from kanako_tasks import actions, dmenu, settings
 
 
 @click.group()
@@ -42,8 +34,14 @@ def show():
 
 
 @click.command()
-def stats():
-    actions.stats()
+@click.option(
+    "-p",
+    "--period",
+    type=click.Choice(["day", "week", "month", "year", "all"]),
+    default="all",
+)
+def stats(period):
+    actions.stats(period)
 
 
 @click.command()
