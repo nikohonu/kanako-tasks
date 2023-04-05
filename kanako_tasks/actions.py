@@ -10,23 +10,21 @@ from kanako_tasks import (
     settings,
     timew,
 )
-from kanako_tasks.formatting import Tree, print
+from kanako_tasks.formatting import Tree, duration_to_str, print
 
 
 def start(random=False):
-    tasks_with_path = parcing.get_tasks_with_path()
+    tasks = parcing.get_tasks_with_path()
+    tasks_dict = {" ".join(task).lower(): task for task in tasks}
     if not random:
-        full_path_task = dmenu.run(tasks_with_path, "Tasks")
+        task = tasks_dict[dmenu.run(list(tasks_dict.keys()), "Tasks")]
     else:
-        shuffle(tasks_with_path)
-        full_path_task = tasks_with_path[0]
-    if full_path_task:
-        index = full_path_task.rfind(".")
-        task = full_path_task[index + 1 :]
-        path = full_path_task[:index]
-        timew.start([task, full_path_task])
+        shuffle(tasks)
+        task = tasks[0]
+    if task:
+        timew.start(task)
     else:
-        raise "You don't chose task to start"
+        raise Exception("You don't chose task to start")
 
 
 def stop():
@@ -41,9 +39,8 @@ def get_counter():
     intervals = timew.get_intervals(":day")
     result = {"duration": 0, "count": 0}
     for interval in intervals:
-        if interval["name"] != "Resting":
-            result["duration"] += interval["duration"].seconds
-            result["count"] += 1
+        result["duration"] += interval["duration"].seconds
+        result["count"] += 1
     return result
 
 
@@ -51,7 +48,7 @@ def show():
     interval = timew.get_current_interval()
     label = ""
     if interval:
-        label = f'{interval["name"]}'
+        label = f'{interval["name"]} {interval["project"]} {interval["context"]} for {duration_to_str(interval["duration"].seconds)}'
     else:
         label = "Kanako is sleeping"
     data = get_counter()
@@ -60,54 +57,29 @@ def show():
     )
 
 
-def add_interval(root, path, duration):
-    index = path.find(".")
-    if index != -1:
-        parent = path[:index]
-        if parent not in root["children"]:
-            root["children"][parent] = {"duration": duration, "children": {}}
-            add_interval(root["children"][parent], path[index + 1 :], duration),
-        else:
-            root["children"][parent]["duration"] += duration
-            add_interval(root["children"][parent], path[index + 1 :], duration),
-    else:
-        parent = path
-        if parent not in root["children"]:
-            root["children"][parent] = {"duration": duration, "children": {}}
-        else:
-            root["children"][parent]["duration"] += duration
-
-
-def task_status_tree():
-    intervals = timew.get_intervals()
-    task_tree = {"children": {}, "duration": 0}
+def add_branch(key, intervals, root):
+    data = {}
     for interval in intervals:
-        if "path" in interval:
-            add_interval(task_tree, interval["path"], interval["duration"])
-            task_tree["duration"] += interval["duration"].seconds
-    return task_tree
-
-
-def add_brach(task_root, task_name=None, tree_root=None):
-    if tree_root == None:
-        tree = Tree(
-            f"Stats - {formatting.duration_to_str(task_root['duration'])}"
-        )
-    else:
-        tree = tree_root.add(
-            f'{task_name} - {formatting.duration_to_str(task_root["duration"].seconds)}'
-        )
-    if task_root["children"]:
-        for key, value in sorted(
-            task_root["children"].items(),
-            key=lambda x: x[1]["duration"],
-            reverse=True,
-        ):
-            add_brach(value, key, tree)
-    return tree
+        if key in interval:
+            if interval[key] in data:
+                data[interval[key]] += interval["duration"]
+            else:
+                data[interval[key]] = interval["duration"]
+        else:
+            continue
+    for key, value in sorted(
+        data.items(), key=lambda item: item[1], reverse=True
+    ):
+        root.add(f"{key} {duration_to_str(value.seconds)}")
 
 
 def stats():
-    task_tree = task_status_tree()
-    tree = add_brach(task_tree)
+    tree = Tree("Stats")
+    intervals = timew.get_intervals()
+    branch = tree.add("By name")
+    add_branch("name", intervals, branch)
+    branch = tree.add("By project")
+    add_branch("project", intervals, branch)
+    branch = tree.add("By context")
+    add_branch("context", intervals, branch)
     print(tree)

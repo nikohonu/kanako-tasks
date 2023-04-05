@@ -18,6 +18,6 @@ def duration_to_str(duration):
     seconds = seconds % 60
     minutes = minutes % 60
     result += f"{hours}h " if hours else ""
-    result += f"{minutes}m " if minutes else ""
-    result += f"{seconds}s" if seconds else ""
-    return result.strip()
+    result += f"{minutes}m " if minutes or hours else ""
+    result += f"{seconds}s" if seconds or minutes else ""
+    return f"[red]{result.strip()}[/red]"

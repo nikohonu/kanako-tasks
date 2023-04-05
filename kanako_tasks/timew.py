@@ -8,11 +8,12 @@ from click import command
 def process_interval(raw_interval):
     interval = {}
     for tag in raw_interval["tags"]:
-        index = tag.find(".")
-        if index == -1:
-            interval["name"] = tag
+        if tag.startswith("+"):
+            interval["project"] = tag
+        elif tag.startswith("@"):
+            interval["context"] = tag
         else:
-            interval["path"] = tag
+            interval["name"] = tag
     interval["start"] = dt.datetime.strptime(
         raw_interval["start"], "%Y%m%dT%H%M%S%z"
     )

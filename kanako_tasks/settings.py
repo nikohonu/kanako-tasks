@@ -3,14 +3,16 @@ from pathlib import Path
 
 import appdirs
 
-conifg_path = Path(appdirs.user_config_dir(appname="kanako", appauthor="Niko Honu"))
+conifg_path = Path(
+    appdirs.user_config_dir(appname="kanako", appauthor="Niko Honu")
+)
 conifg_path.mkdir(exist_ok=True, parents=True)
 config_file_path = conifg_path / "settings.json"
 
 
 def _load():
     if config_file_path.exists():
-        with config_file_path.open() as file:
+        with config_file_path.open("r") as file:
             return json.load(file)
     else:
         return {}
