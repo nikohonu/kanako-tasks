@@ -46,7 +46,12 @@ def stats(period):
 
 @click.command()
 def run():
-    options = ["start", "random", "stop", "continue"]
+    options = [
+        "start",
+        "random",
+        "stop",
+        "continue",
+    ]
     option = dmenu.run(options, "What you want?")
     match option:
         case "start":

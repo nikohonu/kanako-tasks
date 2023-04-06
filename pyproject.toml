@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kanako-tasks"
-version = "0.6.0"
+version = "0.7.0"
 description = "a program that provides tools for fast time tracking with timewarrior"
 authors = ["Niko Honu <nikohonu@gmail.com>"]
 license = "MIT"

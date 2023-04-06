@@ -6,6 +6,12 @@ from kanako_tasks.formatting import Tree, duration_to_str, print
 
 def start(random=False):
     tasks = parcing.get_tasks_with_path()
+    context = dmenu.run(
+        ["any", "@fun", "@work", "@study"],
+        "What is the context of a random task?",
+    )
+    if context != "any":
+        tasks = [task for task in tasks if task[2] == context]
     tasks_dict = {" ".join(task).lower(): task for task in tasks}
     if not random:
         task = tasks_dict[dmenu.run(list(tasks_dict.keys()), "Tasks")]
