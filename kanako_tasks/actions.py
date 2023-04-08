@@ -1,25 +1,33 @@
+import datetime as dt
 from random import shuffle
 
 from kanako_tasks import dmenu, formatting, parcing, timew
 from kanako_tasks.formatting import Tree, duration_to_str, print
 
 
-def start(random=False):
-    tasks = parcing.get_tasks_with_path()
-    context = dmenu.run(
-        ["any", "@fun", "@work", "@study"],
-        "What is the context of a random task?",
-    )
-    if context != "any":
-        tasks = [task for task in tasks if task[2] == context]
-    tasks_dict = {" ".join(task).lower(): task for task in tasks}
-    if not random:
-        task = tasks_dict[dmenu.run(list(tasks_dict.keys()), "Tasks")]
-    else:
-        shuffle(tasks)
-        task = tasks[0]
+def start():
+    tasks = parcing.get_tasks_with_coefficient()
+    tasks_dict = {
+        f'{task["coefficient"]}) {task["name"]} {task["project"]} {task["context"]}'.lower(): task
+        for task in tasks
+    }
+    task = tasks_dict[dmenu.run(list(tasks_dict.keys()), "Tasks")]
     if task:
-        timew.start(task)
+        tags = [task["name"], task["project"], task["context"]]
+        timew.start(tags)
+    else:
+        raise Exception("You don't chose task to start")
+
+
+def random(is_pure_random=False):
+    tasks = parcing.get_tasks_with_coefficient()
+    if not is_pure_random:
+        tasks = tasks[:3]
+    shuffle(tasks)
+    task = tasks[0]
+    if task:
+        tags = [task["name"], task["project"], task["context"]]
+        timew.start(tags)
     else:
         raise Exception("You don't chose task to start")
 

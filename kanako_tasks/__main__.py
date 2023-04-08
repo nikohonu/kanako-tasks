@@ -12,10 +12,25 @@ def cli():
 
 @click.command()
 @click.option(
-    "--random", "-r", help="start random task", default=False, is_flag=True
+    "--random",
+    "-r",
+    help="start random task",
+    default=False,
+    is_flag=True,
 )
-def start(random):
-    actions.start(random)
+@click.option(
+    "--pure",
+    "-p",
+    "pure_random",
+    help="without pure random, only the top 3 tasks can be started",
+    default=False,
+    is_flag=True,
+)
+def start(random, pure_random):
+    if random:
+        actions.random(pure_random)
+    else:
+        actions.start()
 
 
 @click.command()
@@ -49,6 +64,7 @@ def run():
     options = [
         "start",
         "random",
+        "pure random",
         "stop",
         "continue",
     ]
@@ -57,7 +73,9 @@ def run():
         case "start":
             actions.start()
         case "random":
-            actions.start(True)
+            actions.random(False)
+        case "pure random":
+            actions.random(True)
         case "stop":
             actions.stop()
         case "continue":
